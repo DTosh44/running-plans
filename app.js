@@ -59,7 +59,7 @@
     if (state.timingMode !== "date" || !state.raceDate) return null;
     const race = parseLocalDate(state.raceDate), today = todayAtNoon();
     if (!race || race <= today) return null;
-    const daysAvailable = Math.floor((race.getTime() - today.getTime()) / 86400000);
+    const daysAvailable = Math.round((race.getTime() - today.getTime()) / 86400000);
     const fullWeeks = Math.floor(daysAvailable / 7);
     const options = DISTANCES[state.distance].weeks;
     const eligible = options.filter(weeks => weeks <= fullWeeks);
