@@ -76,7 +76,7 @@
     if (!info) return '<div class="inline-warning">Choose a future race date.</div>';
     if (info.tooSoon) return `<div class="inline-warning">Your race is only ${info.daysAvailable} days away. The shortest ${esc(state.distance)} plan is ${info.minimumWeeks} weeks, so there is not enough time to complete one of the full plans safely.</div>`;
     const lead = info.leadInDays >= 7 ? `${Math.floor(info.leadInDays / 7)} extra week${Math.floor(info.leadInDays / 7) === 1 ? "" : "s"}` : info.leadInDays > 0 ? `${info.leadInDays} extra day${info.leadInDays === 1 ? "" : "s"}` : "";
-    return `<div class="inline-note"><strong>Your ${info.selectedWeeks}-week ${esc(state.distance)} plan starts ${formatDate(info.planStart)}.</strong> Race day is ${formatDate(info.race)}${lead ? `, giving you ${lead} before the structured plan begins` : ""}.</div>`;
+    return `<div class="inline-note"><strong>Based on your race date, your best-fit plan is ${info.selectedWeeks} weeks, starting ${formatDate(info.planStart)}.</strong> Race day is ${formatDate(info.race)}${lead ? `, giving you ${lead} before the structured plan begins` : ""}.${lead ? " Once we know your current running, we’ll also suggest what to do between now and the plan start." : ""}</div>`;
   }
 
   function kmFromInput() {
@@ -311,8 +311,30 @@
   function paceValue(key, unit = state.units) { const p = trainingPaces()[key]; if (!p) return "By effort"; return Math.abs(p[0] - p[1]) < .5 ? paceString(p[0], unit) : paceRange(p[0], p[1], unit); }
   const totalWeekDistance = week => week.sessions.reduce((sum, session) => sum + session.distanceKm, 0);
 
+  function leadInAdvice(plan) {
+    if (state.timingMode !== "date") return "";
+    const info = raceTimingInfo();
+    if (!info || info.tooSoon) return "";
+    const startText = formatDate(info.planStart);
+    if (info.leadInDays === 0) {
+      return `<article class="lead-in-card"><small>YOUR START DATE</small><h3>Your best-fit plan starts now.</h3><p>Your ${plan.durationWeeks}-week ${esc(plan.distance)} plan begins today and leads directly into race day on ${formatDate(info.race)}.</p></article>`;
+    }
+    if (info.leadInDays < 7) {
+      return `<article class="lead-in-card"><small>BEFORE YOUR PLAN STARTS</small><h3>Your best-fit plan starts ${startText}.</h3><p>You have ${info.leadInDays} day${info.leadInDays === 1 ? "" : "s"} before the structured plan begins. Keep any running easy and familiar rather than trying to squeeze in extra training.</p></article>`;
+    }
+    const level = plan.level;
+    const suggestedRuns = Math.min(plan.daysPerWeek, level === "low" ? 3 : level === "established" ? 4 : 5);
+    const easyRuns = Math.max(1, suggestedRuns - 1);
+    const leadWeeks = Math.floor(info.leadInDays / 7);
+    const currentKm = kmFromInput();
+    const currentText = Number.isFinite(currentKm) && currentKm > 0
+      ? ` Keep your total weekly distance roughly around your recent average of ${distanceLabel(currentKm)} rather than building aggressively before the plan starts.`
+      : " If you are not currently running, make the easy sessions short run/walk outings and build gradually.";
+    return `<article class="lead-in-card"><small>BEFORE YOUR PLAN STARTS</small><h3>Your best-fit plan is ${plan.durationWeeks} weeks, starting ${startText}.</h3><p>If you want to start now, use the ${leadWeeks}-week lead-in to run around ${suggestedRuns} times each week: ${easyRuns} easy run${easyRuns === 1 ? "" : "s"} plus one longer, relaxed run at the weekend.${currentText} Avoid hard sessions for now—the structured work begins with your plan.</p></article>`;
+  }
+
   function planHtml(plan) {
-    const assess = recentAssessment(), warning = suitabilityWarning(kmFromInput());
+    const assess = recentAssessment(), warning = suitabilityWarning(kmFromInput()), leadIn = leadInAdvice(plan);
     const paceCells = [["Race pace","race","Exact goal pace"],["Threshold","threshold","Comfortably hard"],["Intervals","interval","Hard but repeatable"],["Steady","steady","Controlled aerobic"],["Easy","easy","Conversation pace"],["Long run","long","Relaxed endurance"]]
       .map(([label,key,note]) => `<div class="pace-cell"><span>${label}</span><strong>${paceValue(key)}</strong><small>${note}</small></div>`).join("");
     const weeks = plan.weeks.map((week, index) => {
@@ -326,6 +348,7 @@
       <article class="result-summary"><span class="result-kicker">YOUR PERSONALISED PLAN</span><h2>${esc(plan.durationWeeks)}-week ${esc(plan.distance)} plan</h2><p>${esc(plan.daysPerWeek)} runs a week · ${esc(plan.levelLabel)} starting volume · target ${esc(state.targetTime)}${state.timingMode === "date" && raceTimingInfo() ? ` · race ${formatDate(raceTimingInfo().race)}` : ""}</p><div class="result-tags"><span>${esc(state.units === "km" ? "MIN/KM" : "MIN/MILE")}</span><span>${esc(levelLabel(plan.level))}</span><span>TARGET-SPECIFIC</span></div><div class="result-actions"><button type="button" class="button button-primary" id="printPlan">Print / save PDF</button><button type="button" class="button button-outline" id="changeAnswers">Change answers</button></div></article>
       <aside class="advice-card"><small>RECENT-FORM CHECK</small><h3>${esc(assess.title)}</h3><p>${esc(assess.text)}</p><div class="advice-status">${esc(assess.status)}</div></aside></div>
       ${warning ? warning : ""}
+      ${leadIn}
       <article class="pace-card"><div class="pace-card-head"><div><small>YOUR PACE GUIDE</small><h3>${esc(state.targetTime)} ${esc(state.distance)} target</h3></div><div class="pace-toggle" aria-label="Pace units"><button type="button" data-unit="km" class="${state.units === "km" ? "active" : ""}">MIN/KM</button><button type="button" data-unit="mi" class="${state.units === "mi" ? "active" : ""}">MIN/MILE</button></div></div><div class="pace-grid">${paceCells}</div></article>
       <div class="plan-header"><div><span class="eyebrow"><span></span>YOUR SCHEDULE</span><h3>${esc(plan.durationWeeks)} weeks to race day</h3></div><p>Your schedule reflects your race distance, training time, running frequency and current training. ${state.timingMode === "date" && raceTimingInfo() ? `It begins on ${formatDate(raceTimingInfo().planStart)} and leads into race day on ${formatDate(raceTimingInfo().race)}. ` : ""}Distances and paces are shown in your preferred units.</p></div>
       <div class="weeks-list">${weeks}</div>
