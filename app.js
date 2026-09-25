@@ -15,14 +15,14 @@
   const DIST_BY_CODE = { "5": "5K", "10": "10K", "H": "Half Marathon", "M": "Marathon" };
   const FOCUS = { B: "Build consistency", S: "Build strength", R: "Race-specific fitness", P: "Sharpen", T: "Taper", X: "Race week" };
   const DAY = { M: "Monday", T: "Tuesday", W: "Wednesday", H: "Thursday", S: "Saturday", U: "Sunday" };
-  const state = { step: 1, distance: "10K", weeks: null, days: null, units: "km", weeklyDistance: "", targetTime: "45:00", skipRecent: true, recentDistance: "5K", recentTime: "", recentAge: "1–3 months" };
+  const state = { step: 1, distance: "10K", timingMode: "date", raceDate: "", weeks: null, days: null, units: "km", weeklyDistance: "", targetTime: "45:00", skipRecent: true, recentDistance: "5K", recentTime: "", recentAge: "1–3 months" };
   const builderPanel = document.getElementById("builderPanel");
   const stepLabel = document.getElementById("stepLabel");
   const stepTitle = document.getElementById("stepTitle");
   const progressFill = document.getElementById("progressFill");
   const resultSection = document.getElementById("result");
   const resultContent = document.getElementById("resultContent");
-  const STEP_TITLES = ["Race distance", "Plan length", "Running days", "Current running", "Target time", "Recent race"];
+  const STEP_TITLES = ["Race distance", "Race timing", "Running days", "Current running", "Target time", "Recent race"];
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
 
   function parseDuration(value) {
@@ -37,6 +37,48 @@
     const s = Math.max(0, Math.round(seconds)), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
     return h ? `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}` : `${m}:${String(sec).padStart(2, "0")}`;
   }
+  function todayAtNoon() {
+    const date = new Date();
+    date.setHours(12, 0, 0, 0);
+    return date;
+  }
+  function parseLocalDate(value) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value || "")) return null;
+    const [year, month, day] = value.split("-").map(Number);
+    const date = new Date(year, month - 1, day, 12, 0, 0, 0);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+  function formatDate(date) {
+    return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(date);
+  }
+  function isoLocalDate(date) {
+    const year = date.getFullYear(), month = String(date.getMonth() + 1).padStart(2, "0"), day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+  function raceTimingInfo() {
+    if (state.timingMode !== "date" || !state.raceDate) return null;
+    const race = parseLocalDate(state.raceDate), today = todayAtNoon();
+    if (!race || race <= today) return null;
+    const daysAvailable = Math.floor((race.getTime() - today.getTime()) / 86400000);
+    const fullWeeks = Math.floor(daysAvailable / 7);
+    const options = DISTANCES[state.distance].weeks;
+    const eligible = options.filter(weeks => weeks <= fullWeeks);
+    if (!eligible.length) return { race, daysAvailable, fullWeeks, tooSoon: true, minimumWeeks: Math.min(...options) };
+    const selectedWeeks = Math.max(...eligible);
+    const planStart = new Date(race);
+    planStart.setDate(planStart.getDate() - selectedWeeks * 7);
+    const leadInDays = Math.max(0, daysAvailable - selectedWeeks * 7);
+    return { race, daysAvailable, fullWeeks, selectedWeeks, planStart, leadInDays, tooSoon: false };
+  }
+  function raceTimingHint() {
+    const info = raceTimingInfo();
+    if (!state.raceDate) return "";
+    if (!info) return '<div class="inline-warning">Choose a future race date.</div>';
+    if (info.tooSoon) return `<div class="inline-warning">Your race is only ${info.daysAvailable} days away. The shortest ${esc(state.distance)} plan is ${info.minimumWeeks} weeks, so there is not enough time to complete one of the full plans safely.</div>`;
+    const lead = info.leadInDays >= 7 ? `${Math.floor(info.leadInDays / 7)} extra week${Math.floor(info.leadInDays / 7) === 1 ? "" : "s"}` : info.leadInDays > 0 ? `${info.leadInDays} extra day${info.leadInDays === 1 ? "" : "s"}` : "";
+    return `<div class="inline-note"><strong>Your ${info.selectedWeeks}-week ${esc(state.distance)} plan starts ${formatDate(info.planStart)}.</strong> Race day is ${formatDate(info.race)}${lead ? `, giving you ${lead} before the structured plan begins` : ""}.</div>`;
+  }
+
   function kmFromInput() {
     const value = Number(state.weeklyDistance);
     if (!Number.isFinite(value) || value < 0) return NaN;
@@ -121,7 +163,14 @@
       </div>${actions()}`;
     } else if (state.step === 2) {
       const options = DISTANCES[state.distance].weeks.map(w => choiceButton(String(w), `<span class="big-number">${w}</span> weeks`, w <= 4 ? "Short, focused block" : w <= 8 ? "Compact build" : w <= 12 ? "Balanced build" : w <= 16 ? "Progressive build" : "Maximum build time", state.weeks === w)).join("");
-      html = `<div class="question-head"><span>QUESTION 02</span><h3>How long until race day?</h3><p>Choose the plan length that matches your race date. More time generally allows a gentler build and more recovery weeks.</p></div><div class="choice-grid">${options}</div>${actions()}`;
+      const today = isoLocalDate(todayAtNoon());
+      html = `<div class="question-head"><span>QUESTION 02</span><h3>When is your race?</h3><p>If you know the date, enter it and we’ll work out the best plan length automatically. No race booked yet? You can choose how many weeks you want to train instead.</p></div>
+      <div class="choice-grid">
+        <button type="button" class="choice-card ${state.timingMode === "date" ? "selected" : ""}" data-timing="date"><strong>I have a race date</strong><small>We’ll calculate the right plan length and start date for you.</small></button>
+        <button type="button" class="choice-card ${state.timingMode === "weeks" ? "selected" : ""}" data-timing="weeks"><strong>I don’t have a race date yet</strong><small>Choose a training block and work towards a future race or goal.</small></button>
+      </div>
+      ${state.timingMode === "date" ? `<div class="field-group" style="margin-top:22px"><label class="field-label" for="raceDate">Race date</label><input class="field-input" id="raceDate" type="date" min="${today}" value="${esc(state.raceDate)}"><div id="raceTimingHint">${raceTimingHint()}</div><div class="field-error" id="raceDateError" hidden></div></div>` : `<div style="margin-top:22px"><div class="choice-grid">${options}</div><div class="field-error" id="weeksError" hidden></div></div>`}
+      ${actions()}`;
     } else if (state.step === 3) {
       html = `<div class="question-head"><span>QUESTION 03</span><h3>How many days a week do you want to run?</h3><p>Choose what you can sustain most weeks, not the maximum you could squeeze in on a perfect week.</p></div>
       <div class="choice-grid four">${[3,4,5,6].map(d => choiceButton(String(d), `<span class="big-number">${d}</span> days`, d === 3 ? "Minimum effective frequency" : d === 4 ? "Balanced and flexible" : d === 5 ? "More aerobic volume" : "High-frequency running", state.days === d)).join("")}</div>${actions()}`;
@@ -148,7 +197,17 @@
   function showError(id, message) { const el = document.getElementById(id); if (!el) return; el.hidden = !message; el.textContent = message || ""; }
   function validStep() {
     if (state.step === 1) return Boolean(state.distance);
-    if (state.step === 2) return Boolean(state.weeks);
+    if (state.step === 2) {
+      if (state.timingMode === "weeks") {
+        const ok = Boolean(state.weeks); showError("weeksError", ok ? "" : "Choose how many weeks you want to train."); return ok;
+      }
+      const input = document.getElementById("raceDate"); state.raceDate = input?.value || state.raceDate;
+      const info = raceTimingInfo();
+      const ok = Boolean(info && !info.tooSoon);
+      showError("raceDateError", ok ? "" : info?.tooSoon ? `That race is too close for the shortest ${state.distance} plan. Choose a later race date.` : "Choose a future race date.");
+      if (ok) state.weeks = info.selectedWeeks;
+      return ok;
+    }
     if (state.step === 3) return Boolean(state.days);
     if (state.step === 4) {
       const input = document.getElementById("weeklyDistance"); state.weeklyDistance = input?.value ?? state.weeklyDistance; const km = kmFromInput();
@@ -174,6 +233,19 @@
     }));
     document.getElementById("backStep")?.addEventListener("click", () => setStep(state.step - 1));
     document.getElementById("nextStep")?.addEventListener("click", () => { if (!validStep()) return; if (state.step < 6) setStep(state.step + 1); else showPlan(); });
+    builderPanel.querySelectorAll("[data-timing]").forEach(btn => btn.addEventListener("click", () => {
+      state.timingMode = btn.dataset.timing;
+      if (state.timingMode === "date") state.weeks = null;
+      renderStep();
+    }));
+    const raceDate = document.getElementById("raceDate");
+    raceDate?.addEventListener("input", () => {
+      state.raceDate = raceDate.value;
+      const info = raceTimingInfo();
+      state.weeks = info && !info.tooSoon ? info.selectedWeeks : null;
+      const hint = document.getElementById("raceTimingHint"); if (hint) hint.innerHTML = raceTimingHint();
+      showError("raceDateError", "");
+    });
     const weekly = document.getElementById("weeklyDistance");
     weekly?.addEventListener("input", () => { state.weeklyDistance = weekly.value; document.getElementById("volumeHint").innerHTML = weekly.value === "" ? "" : currentLevelHint(); showError("weeklyError", ""); });
     document.getElementById("targetTime")?.addEventListener("input", e => { state.targetTime = e.target.value; showError("targetError", ""); });
@@ -251,11 +323,11 @@
       return `<details class="week-card" ${index < 2 ? "open" : ""}><summary><span class="week-number"><small>WEEK</small><strong>${week.week}</strong></span><span class="week-focus"><strong>${esc(week.focus)}</strong><small>${esc(distanceLabel(totalWeekDistance(week)))} scheduled</small></span><span class="week-chevron" aria-hidden="true">+</span></summary><div class="session-list">${sessions}</div></details>`;
     }).join("");
     return `<div class="result-hero">
-      <article class="result-summary"><span class="result-kicker">YOUR PERSONALISED PLAN</span><h2>${esc(plan.durationWeeks)}-week ${esc(plan.distance)} plan</h2><p>${esc(plan.daysPerWeek)} runs a week · ${esc(plan.levelLabel)} starting volume · target ${esc(state.targetTime)}</p><div class="result-tags"><span>${esc(state.units === "km" ? "MIN/KM" : "MIN/MILE")}</span><span>${esc(levelLabel(plan.level))}</span><span>TARGET-SPECIFIC</span></div><div class="result-actions"><button type="button" class="button button-primary" id="printPlan">Print / save PDF</button><button type="button" class="button button-outline" id="changeAnswers">Change answers</button></div></article>
+      <article class="result-summary"><span class="result-kicker">YOUR PERSONALISED PLAN</span><h2>${esc(plan.durationWeeks)}-week ${esc(plan.distance)} plan</h2><p>${esc(plan.daysPerWeek)} runs a week · ${esc(plan.levelLabel)} starting volume · target ${esc(state.targetTime)}${state.timingMode === "date" && raceTimingInfo() ? ` · race ${formatDate(raceTimingInfo().race)}` : ""}</p><div class="result-tags"><span>${esc(state.units === "km" ? "MIN/KM" : "MIN/MILE")}</span><span>${esc(levelLabel(plan.level))}</span><span>TARGET-SPECIFIC</span></div><div class="result-actions"><button type="button" class="button button-primary" id="printPlan">Print / save PDF</button><button type="button" class="button button-outline" id="changeAnswers">Change answers</button></div></article>
       <aside class="advice-card"><small>RECENT-FORM CHECK</small><h3>${esc(assess.title)}</h3><p>${esc(assess.text)}</p><div class="advice-status">${esc(assess.status)}</div></aside></div>
       ${warning ? warning : ""}
       <article class="pace-card"><div class="pace-card-head"><div><small>YOUR PACE GUIDE</small><h3>${esc(state.targetTime)} ${esc(state.distance)} target</h3></div><div class="pace-toggle" aria-label="Pace units"><button type="button" data-unit="km" class="${state.units === "km" ? "active" : ""}">MIN/KM</button><button type="button" data-unit="mi" class="${state.units === "mi" ? "active" : ""}">MIN/MILE</button></div></div><div class="pace-grid">${paceCells}</div></article>
-      <div class="plan-header"><div><span class="eyebrow"><span></span>YOUR SCHEDULE</span><h3>${esc(plan.durationWeeks)} weeks to race day</h3></div><p>Your schedule reflects your race distance, available weeks, running frequency and current training. Distances and paces are shown in your preferred units.</p></div>
+      <div class="plan-header"><div><span class="eyebrow"><span></span>YOUR SCHEDULE</span><h3>${esc(plan.durationWeeks)} weeks to race day</h3></div><p>Your schedule reflects your race distance, training time, running frequency and current training. ${state.timingMode === "date" && raceTimingInfo() ? `It begins on ${formatDate(raceTimingInfo().planStart)} and leads into race day on ${formatDate(raceTimingInfo().race)}. ` : ""}Distances and paces are shown in your preferred units.</p></div>
       <div class="weeks-list">${weeks}</div>
       <div class="result-note"><strong>How to use this:</strong> Easy means conversational. Threshold should feel controlled and comfortably hard, not like a race. Interval repetitions are harder but repeatable. Warm up before quality work and cool down afterwards. If pain changes your stride, worsens as you run, or persists, stop and seek appropriate advice rather than trying to “complete the plan”.</div>`;
   }
