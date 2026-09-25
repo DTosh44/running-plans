@@ -6,7 +6,7 @@
   <meta name="description" content="Personalised running plans plus free pace and VDOT training pace calculators for 5K, 10K, half marathon and marathon runners." />
   <meta name="theme-color" content="#1646d8" />
   <title>RunningPlans — Training plans, pace calculator & VDOT paces</title>
-  <link rel="stylesheet" href="./styles.css?v=20260925-3" />
+  <link rel="stylesheet" href="./styles.css?v=20260925-4" />
 </head>
 <body>
   <header class="site-header">
@@ -16,13 +16,13 @@
         <span class="brand-name"><strong>Running</strong><em>PLANS</em></span>
       </a>
       <nav class="desktop-nav" aria-label="Main navigation">
-        <a href="#builder">Training plan</a><a href="#pace-calculator">Pace calculator</a><a href="#vdot-calculator">VDOT &amp; paces</a>
+        <a href="#builder">Training plan</a><a href="#pace-calculator">Pace calculator</a><a href="#vdot-calculator">VDOT &amp; paces</a><a href="#running-profile">Running Profile</a>
         <a class="button button-primary button-small" href="#builder">Build my plan</a>
       </nav>
       <button class="menu-button" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
     <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation" hidden>
-      <a href="#builder">Training plan</a><a href="#pace-calculator">Pace calculator</a><a href="#vdot-calculator">VDOT &amp; training paces</a>
+      <a href="#builder">Training plan</a><a href="#pace-calculator">Pace calculator</a><a href="#vdot-calculator">VDOT &amp; training paces</a><a href="#running-profile">Running Profile</a>
     </nav>
   </header>
 
@@ -67,6 +67,32 @@
         <a class="tool-card tool-card-primary" href="#builder"><span class="tool-number">01</span><span class="tool-icon">↗</span><h3>Personalised training plan</h3><p>Build a 5K, 10K, half marathon or marathon plan around your race date, current running, available days and target time.</p><strong>Build my plan →</strong></a>
         <a class="tool-card" href="#pace-calculator"><span class="tool-number">02</span><span class="tool-icon">⏱</span><h3>Pace calculator</h3><p>Work out pace, finish time or distance from any two known values, with automatic kilometre and mile conversions.</p><strong>Calculate pace →</strong></a>
         <a class="tool-card" href="#vdot-calculator"><span class="tool-number">03</span><span class="tool-icon">V</span><h3>VDOT &amp; training paces</h3><p>Turn a recent race performance into a VDOT estimate, training pace ranges and equivalent race performances.</p><strong>Calculate VDOT →</strong></a>
+        <a class="tool-card tool-card-paid" href="#running-profile"><span class="tool-number">04</span><span class="tool-icon">◎</span><h3>Your Running Profile</h3><p>Connect Strava and turn your last 12 weeks into a clear report covering training load, estimated heart-rate zones, intensity and aerobic efficiency.</p><strong>£5.99 introductory price →</strong></a>
+      </div>
+    </section>
+
+    <section class="profile-section" id="running-profile">
+      <div class="page-width profile-grid">
+        <div class="profile-copy">
+          <span class="eyebrow light"><span></span>YOUR RUNNING PROFILE</span>
+          <div class="profile-price"><strong>£5.99</strong><span>INTRODUCTORY PRICE</span></div>
+          <h2>See what your Strava history says about your running.</h2>
+          <p>Connect your account and we’ll analyse the last 12 weeks of running to turn your training data into something useful — without asking you to interpret charts, zones or spreadsheets yourself.</p>
+          <div class="profile-feature-list">
+            <span><b>01</b> Weekly volume, consistency and long-run trends</span>
+            <span><b>02</b> Estimated heart-rate training zones from your actual runs</span>
+            <span><b>03</b> Time spent easy, steady, threshold and high intensity</span>
+            <span><b>04</b> Pace at comparable heart rates and aerobic-efficiency trends</span>
+            <span><b>05</b> Strengths, opportunities and practical next steps</span>
+          </div>
+          <p class="profile-smallprint">We analyse activity and heart-rate data only for the purpose of producing your report. Raw activity streams are not retained by this version of RunningPlans. <a href="./privacy.html">How your Strava data is used</a>.</p>
+        </div>
+        <div class="profile-app-card">
+          <div class="profile-card-top"><span>RUNNING PROFILE</span><small>12-WEEK ANALYSIS</small></div>
+          <div id="profileApp" class="profile-app" aria-live="polite">
+            <div class="profile-loading"><span class="profile-spinner"></span><strong>Checking report service…</strong><small>This should only take a moment.</small></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -168,10 +194,11 @@
     <section class="notes-section page-width"><div><span class="eyebrow"><span></span>RUN SMART</span><h2>A plan is guidance, not a contract.</h2></div><p>Adjust for illness, pain, unusual fatigue, heat, hills and life. Easy running should feel conversational; threshold is controlled and comfortably hard; intervals are harder but repeatable. If you are new to running, returning from injury, pregnant, or concerned about a health condition, get appropriate professional advice before starting.</p></section>
   </main>
 
-  <footer class="site-footer"><div class="page-width footer-grid"><a class="brand brand-inverse" href="#top"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span class="brand-name"><strong>Running</strong><em>PLANS</em></span></a><p>Personalised training plans, pace tools and performance calculators for runners.</p><nav><a href="#builder">Training plan</a><a href="#pace-calculator">Pace</a><a href="#vdot-calculator">VDOT</a></nav><small>© 2026 RunningPlans. General training guidance only.</small></div></footer>
+  <footer class="site-footer"><div class="page-width footer-grid"><a class="brand brand-inverse" href="#top"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span class="brand-name"><strong>Running</strong><em>PLANS</em></span></a><p>Personalised training plans, pace tools and performance analysis for runners.</p><nav><a href="#builder">Training plan</a><a href="#pace-calculator">Pace</a><a href="#vdot-calculator">VDOT</a><a href="#running-profile">Running Profile</a><a href="./privacy.html">Privacy</a></nav><small>© 2026 RunningPlans. General training guidance only.</small></div></footer>
 
   <script src="./plans-data.js?v=20260925-3"></script>
   <script src="./app.js?v=20260925-3"></script>
   <script src="./calculators.js?v=20260925-1"></script>
+  <script src="./profile.js?v=20260925-1"></script>
 </body>
 </html>
