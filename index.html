@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Personalised 5K, 10K, half marathon and marathon training plans tailored to your target race, available time, current running and goal." />
+  <meta name="description" content="Personalised running plans plus free pace and VDOT training pace calculators for 5K, 10K, half marathon and marathon runners." />
   <meta name="theme-color" content="#1646d8" />
-  <title>RunningPlans — Find the plan that fits your running</title>
-  <link rel="stylesheet" href="./styles.css?v=20260925-2" />
+  <title>RunningPlans — Training plans, pace calculator & VDOT paces</title>
+  <link rel="stylesheet" href="./styles.css?v=20260925-3" />
 </head>
 <body>
   <header class="site-header">
@@ -16,13 +16,13 @@
         <span class="brand-name"><strong>Running</strong><em>PLANS</em></span>
       </a>
       <nav class="desktop-nav" aria-label="Main navigation">
-        <a href="#how">How it works</a><a href="#plans">The plans</a><a href="#paces">Training paces</a>
-        <a class="button button-primary button-small" href="#builder">Find my plan</a>
+        <a href="#builder">Training plan</a><a href="#pace-calculator">Pace calculator</a><a href="#vdot-calculator">VDOT &amp; paces</a>
+        <a class="button button-primary button-small" href="#builder">Build my plan</a>
       </nav>
       <button class="menu-button" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
     <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation" hidden>
-      <a href="#how">How it works</a><a href="#plans">The plans</a><a href="#paces">Training paces</a><a href="#builder">Find my plan</a>
+      <a href="#builder">Training plan</a><a href="#pace-calculator">Pace calculator</a><a href="#vdot-calculator">VDOT &amp; training paces</a>
     </nav>
   </header>
 
@@ -30,12 +30,12 @@
     <section class="hero-section">
       <div class="page-width hero-grid">
         <div class="hero-copy">
-          <span class="eyebrow"><span></span>PERSONALISED RACE TRAINING</span>
-          <h1>Your race. Your goal.<br><em>Your training plan.</em></h1>
-          <p>Get a running plan tailored to your target race, the time you have available, how often you can train, your current running and the finish time you want to achieve.</p>
+          <span class="eyebrow"><span></span>TRAIN SMARTER FOR YOUR NEXT RACE</span>
+          <h1>Your race. Your goal.<br><em>Your training, worked out.</em></h1>
+          <p>Get a running plan tailored to your target race, available time and current ability — then use our pace and VDOT tools to understand exactly how fast to train and race.</p>
           <div class="hero-actions">
-            <a href="#builder" class="button button-primary">Find my training plan <span aria-hidden="true">→</span></a>
-            <a href="#plans" class="text-link">See how the plans work</a>
+            <a href="#builder" class="button button-primary">Build my training plan <span aria-hidden="true">→</span></a>
+            <a href="#running-tools" class="text-link">Explore the calculators</a>
           </div>
           <div class="hero-proof" aria-label="Available race distances"><span>5K</span><i></i><span>10K</span><i></i><span>Half</span><i></i><span>Marathon</span></div>
         </div>
@@ -59,7 +59,72 @@
       </div>
     </section>
 
-    <section class="statement-strip"><div class="page-width"><span>5K</span><i></i><span>10K</span><i></i><span>Half Marathon</span><i></i><span>Marathon</span><i></i><span>3–6 days a week</span><i></i><span>4–20 weeks</span></div></section>
+    <section class="statement-strip"><div class="page-width"><span>Training plans</span><i></i><span>Pace calculator</span><i></i><span>VDOT &amp; training paces</span><i></i><span>5K to marathon</span><i></i><span>KM or miles</span></div></section>
+
+    <section class="tools-section page-width" id="running-tools">
+      <div class="section-heading centred"><span class="eyebrow"><span></span>RUNNING TOOLS</span><h2>Plan it. Pace it. Understand your fitness.</h2><p>Three free tools designed to work together — whether you already have a race booked or you simply want to understand your running better.</p></div>
+      <div class="tool-grid">
+        <a class="tool-card tool-card-primary" href="#builder"><span class="tool-number">01</span><span class="tool-icon">↗</span><h3>Personalised training plan</h3><p>Build a 5K, 10K, half marathon or marathon plan around your race date, current running, available days and target time.</p><strong>Build my plan →</strong></a>
+        <a class="tool-card" href="#pace-calculator"><span class="tool-number">02</span><span class="tool-icon">⏱</span><h3>Pace calculator</h3><p>Work out pace, finish time or distance from any two known values, with automatic kilometre and mile conversions.</p><strong>Calculate pace →</strong></a>
+        <a class="tool-card" href="#vdot-calculator"><span class="tool-number">03</span><span class="tool-icon">V</span><h3>VDOT &amp; training paces</h3><p>Turn a recent race performance into a VDOT estimate, training pace ranges and equivalent race performances.</p><strong>Calculate VDOT →</strong></a>
+      </div>
+    </section>
+
+    <section class="calculator-section page-width" id="pace-calculator">
+      <div class="calculator-heading">
+        <div><span class="eyebrow"><span></span>PACE CALCULATOR</span><h2>One missing number.<br>We'll work it out.</h2></div>
+        <p>Choose what you want to calculate, enter the two values you know, and get the answer in both kilometres and miles.</p>
+      </div>
+      <div class="calculator-shell">
+        <div class="calculator-side">
+          <small>WHAT DO YOU WANT TO FIND?</small>
+          <div class="calculator-tabs" role="tablist" aria-label="Pace calculator mode">
+            <button type="button" class="active" data-pace-mode="pace">Pace</button>
+            <button type="button" data-pace-mode="time">Finish time</button>
+            <button type="button" data-pace-mode="distance">Distance</button>
+          </div>
+          <div class="calculator-tip"><strong>Useful for</strong><span>Race targets · workout pacing · treadmill sessions · checking a recent run</span></div>
+        </div>
+        <div class="calculator-main">
+          <div id="paceCalculatorPanel"></div>
+          <div id="paceCalculatorResult" class="calculator-result" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vdot-section" id="vdot-calculator">
+      <div class="page-width">
+        <div class="calculator-heading calculator-heading-light">
+          <div><span class="eyebrow light"><span></span>VDOT &amp; TRAINING PACES</span><h2>Turn a race result into<br>useful training numbers.</h2></div>
+          <p>Enter a recent race or hard effort. We’ll estimate your VDOT, show training pace ranges and calculate equivalent performances at other race distances.</p>
+        </div>
+        <div class="vdot-shell">
+          <form class="vdot-form" id="vdotForm">
+            <div class="form-kicker">YOUR PERFORMANCE</div>
+            <label class="field-label" for="vdotDistance">Race distance</label>
+            <select class="field-select" id="vdotDistance">
+              <option value="1.609344">1 mile</option>
+              <option value="3">3K</option>
+              <option value="5" selected>5K</option>
+              <option value="10">10K</option>
+              <option value="15">15K</option>
+              <option value="21.0975">Half Marathon</option>
+              <option value="42.195">Marathon</option>
+              <option value="custom">Custom distance</option>
+            </select>
+            <div id="vdotCustomDistance" class="vdot-custom" hidden>
+              <label class="field-label" for="vdotCustomValue">Custom distance</label>
+              <div class="field-row"><input class="field-input" id="vdotCustomValue" type="number" min="0.8" step="0.01" inputmode="decimal" placeholder="e.g. 8"><select class="field-select compact-select" id="vdotCustomUnit"><option value="km">km</option><option value="mi">miles</option></select></div>
+            </div>
+            <label class="field-label" for="vdotTime">Finish time</label>
+            <input class="field-input" id="vdotTime" type="text" value="25:00" inputmode="numeric" placeholder="hh:mm:ss or mm:ss">
+            <button class="button button-light button-full" type="submit">Calculate my VDOT <span aria-hidden="true">→</span></button>
+            <p class="calculator-disclaimer">This is a performance-based estimate, not a laboratory VO₂ max test. Training paces are calculated from published Daniels/Gilbert equations rather than copied from a proprietary pace table.</p>
+          </form>
+          <div class="vdot-results" id="vdotResult" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
 
     <section class="section page-width" id="how">
       <div class="section-heading centred"><span class="eyebrow"><span></span>HOW IT WORKS</span><h2>A plan built around your running.</h2><p>Tell us about your race, the weeks you have available, how often you want to run, your current training and your goal. We use those answers to shape the training that fits you best.</p></div>
@@ -103,9 +168,9 @@
     <section class="notes-section page-width"><div><span class="eyebrow"><span></span>RUN SMART</span><h2>A plan is guidance, not a contract.</h2></div><p>Adjust for illness, pain, unusual fatigue, heat, hills and life. Easy running should feel conversational; threshold is controlled and comfortably hard; intervals are harder but repeatable. If you are new to running, returning from injury, pregnant, or concerned about a health condition, get appropriate professional advice before starting.</p></section>
   </main>
 
-  <footer class="site-footer"><div class="page-width footer-grid"><a class="brand brand-inverse" href="#top"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span class="brand-name"><strong>Running</strong><em>PLANS</em></span></a><p>Race training plans tailored to your goal, availability and current running.</p><nav><a href="#how">How it works</a><a href="#builder">Find my plan</a></nav><small>© 2026 RunningPlans. General training guidance only.</small></div></footer>
+  <footer class="site-footer"><div class="page-width footer-grid"><a class="brand brand-inverse" href="#top"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span class="brand-name"><strong>Running</strong><em>PLANS</em></span></a><p>Personalised training plans, pace tools and performance calculators for runners.</p><nav><a href="#builder">Training plan</a><a href="#pace-calculator">Pace</a><a href="#vdot-calculator">VDOT</a></nav><small>© 2026 RunningPlans. General training guidance only.</small></div></footer>
 
-  <script src="./plans-data.js?v=20260925-2"></script>
-  <script src="./app.js?v=20260925-2"></script>
+  <script src="./plans-data.js?v=20260925-3"></script>
+  <script src="./app.js?v=20260925-3"></script>
 </body>
 </html>
