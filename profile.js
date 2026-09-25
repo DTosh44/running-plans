@@ -273,7 +273,7 @@
         ${example ? '<button type="button" class="button button-outline" id="closeExample">Back</button>' : '<button type="button" class="button button-outline" id="disconnectStrava">Disconnect Strava</button>'}
       </div>
     `;
-    document.getElementById('printProfile').addEventListener('click', () => window.print());
+    document.getElementById('printProfile').addEventListener('click', () => { document.body.classList.add('printing-profile'); window.print(); });
     if (example) {
       document.getElementById('closeExample').addEventListener('click', () => staticPreview ? staticPreviewView() : (serviceStatus && serviceStatus.connected ? connectedView(serviceStatus) : connectView()));
     } else {
@@ -364,5 +364,6 @@
     }
   }
 
+  window.addEventListener('afterprint', () => document.body.classList.remove('printing-profile'));
   init();
 })();
