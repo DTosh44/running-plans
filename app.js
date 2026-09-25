@@ -49,7 +49,12 @@
     return Number.isNaN(date.getTime()) ? null : date;
   }
   function formatDate(date) {
-    return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(date);
+    const day = date.getDate();
+    const mod100 = day % 100;
+    const suffix = mod100 >= 11 && mod100 <= 13 ? "th" : day % 10 === 1 ? "st" : day % 10 === 2 ? "nd" : day % 10 === 3 ? "rd" : "th";
+    const weekday = new Intl.DateTimeFormat("en-GB", { weekday: "long" }).format(date);
+    const month = new Intl.DateTimeFormat("en-GB", { month: "long" }).format(date);
+    return `${weekday} ${day}${suffix} ${month}`;
   }
   function isoLocalDate(date) {
     const year = date.getFullYear(), month = String(date.getMonth() + 1).padStart(2, "0"), day = String(date.getDate()).padStart(2, "0");
