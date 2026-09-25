@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1646d8">
+  <title>RunningPlans — Strava privacy & data use</title>
+  <link rel="stylesheet" href="./styles.css?v=20260925-4">
+</head>
+<body>
+  <header class="site-header"><div class="page-width nav-wrap"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span class="brand-name"><strong>Running</strong><em>PLANS</em></span></a><a class="button button-outline button-small" href="./#running-profile">Back to Running Profile</a></div></header>
+  <main class="privacy-page page-width">
+    <span class="eyebrow"><span></span>PRIVACY &amp; STRAVA DATA</span>
+    <h1>How RunningPlans uses your Strava data</h1>
+    <p class="privacy-lead">RunningPlans uses Strava data only when you explicitly choose to connect your account for a Running Profile. Heart-rate and fitness information can be sensitive personal data, so the report flow is designed to minimise what is collected and retained.</p>
+
+    <section><h2>What we access</h2><p>For the Running Profile, the service requests permission to read your Strava activities, including activities marked private if you grant that scope. It processes recent running activity summaries and, where available, time, distance, heart-rate, pace/speed, cadence and elevation streams. The analysis does not request GPS/latitude-longitude streams.</p></section>
+
+    <section><h2>Why we use it</h2><p>The data is used to calculate training volume, consistency, long-run trends, heart-rate coverage, estimated training zones, intensity distribution and aerobic-efficiency trends, and to create the Running Profile you requested. It is not used for advertising or sold to third parties.</p></section>
+
+    <section><h2>Explicit consent</h2><p>Before connecting Strava, you must actively confirm that you consent to RunningPlans processing your Strava activity and heart-rate data for the purpose of producing your report. You can withdraw access by using the Disconnect Strava control, which also asks Strava to revoke the app connection.</p></section>
+
+    <section><h2>What is retained</h2><p>The current version processes raw Strava activity and heart-rate streams in memory and does not write them to a RunningPlans database. An encrypted, HttpOnly session cookie can hold the Strava access and refresh tokens for up to seven days so that the connection can function; disconnecting clears that session. Short-lived signed analysis data expires after approximately 20 minutes. Generated reports are returned to your browser and are not stored by the current backend.</p></section>
+
+    <section><h2>Use of an AI model</h2><p>The report-writing step sends structured summary metrics and observations to the configured OpenAI API. It does not send the raw heart-rate streams, GPS streams, Strava access tokens or your Strava athlete name. The model is used to turn calculated findings into readable report sections; the underlying metrics are calculated by RunningPlans first.</p></section>
+
+    <section><h2>Important limitations</h2><p>Estimated heart-rate zones are training guidance based on historic running data, not a medical assessment, laboratory VO₂ max test or lactate-threshold test. Sensor accuracy, terrain, weather, fatigue, stress, caffeine and illness can all affect heart-rate readings.</p></section>
+
+    <section class="privacy-launch-note"><h2>Before public paid launch</h2><p>The operator/controller name, postal or business contact details, privacy contact email, full retention schedule and final UK GDPR wording must be completed before paid Running Profiles are offered publicly.</p></section>
+  </main>
+  <footer class="site-footer"><div class="page-width footer-grid"><a class="brand brand-inverse" href="./"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span class="brand-name"><strong>Running</strong><em>PLANS</em></span></a><p>Training tools and personalised running analysis.</p><nav><a href="./">Home</a><a href="./#running-profile">Running Profile</a></nav><small>© 2026 RunningPlans.</small></div></footer>
+</body>
+</html>
