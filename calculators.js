@@ -81,7 +81,7 @@
   }
 
   function distanceInputMarkup() {
-    const presets = commonRaces.slice(1).map(function (race) {
+    const presets = commonRaces.map(function (race) {
       return '<button type="button" class="calc-preset" data-pace-preset="' + race.km + '">' + race.label + '</button>';
     }).join('');
     return '<div class="calc-field full">' +
@@ -149,6 +149,12 @@
   function wirePaceForm() {
     const form = document.getElementById('paceCalcForm');
     const unit = document.getElementById('paceCalcUnit');
+    const distanceInput = document.getElementById('paceDistance');
+    const timeInput = document.getElementById('paceTime');
+    const paceInput = document.getElementById('pacePace');
+    distanceInput && distanceInput.addEventListener('input', function () { paceState.distance = distanceInput.value; });
+    timeInput && timeInput.addEventListener('input', function () { paceState.time = timeInput.value; });
+    paceInput && paceInput.addEventListener('input', function () { paceState.pace = paceInput.value; });
     unit && unit.addEventListener('change', function () { setPaceUnit(unit.value); });
 
     document.querySelectorAll('[data-pace-preset]').forEach(function (button) {
@@ -204,6 +210,8 @@
     if (![distanceKm, totalSeconds, secondsPerKm].every(Number.isFinite) || distanceKm <= 0 || totalSeconds <= 0 || secondsPerKm <= 0) {
       return { error: 'Check the values and try again.' };
     }
+    if (secondsPerKm < 100 || secondsPerKm > 1800) return { error: 'That works out to an unusual running pace. Check the values and units.' };
+    if (distanceKm > 500) return { error: 'That works out to an unusually long running distance. Check the values and units.' };
 
     return { distanceKm: distanceKm, totalSeconds: totalSeconds, secondsPerKm: secondsPerKm };
   }
