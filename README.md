@@ -2,6 +2,14 @@
 
 RunningPlans combines free race-planning tools with a paid Running Profile product.
 
+## Product vision, design and roadmap
+
+**What it should become:** a useful, approachable running-tools destination. Free runners can choose a training plan and calculate sensible paces; the optional **£5.99 Running Profile** uses a runner's own recent training to produce a readable, clearly qualified profile and training guidance. Keep the free tools valuable without a paywall and never present estimated heart-rate zones as medical measurement.
+
+**Current visual language** from `styles.css`: athletic and clear, using deep navy `#0d1735`, royal blue `#1646d8`, violet `#6b4eff`, lavender `#a997ff` and light mist `#f6f8ff`; Inter typography, strong hierarchy, responsive utility forms and concise results. Avoid clinical-looking promises, overwhelming analysis screens or unnecessary coaching/social features.
+
+**Next milestone:** finish and verify the real Strava OAuth/analysis → Payhip payment confirmation → personalised report journey. Keep raw streams transient, never expose identity or token secrets to OpenAI, and complete UK privacy/controller review before paid release. A live payment journey is **not yet implemented**. Future services such as subscriptions, one-to-one messaging or social coaching are not approved scope. Follow [PROJECT.md](PROJECT.md) for current status and [AGENTS.md](AGENTS.md) for preservation rules.
+
 ## Public tools
 
 - Personalised 5K, 10K, half-marathon and marathon plan finder
